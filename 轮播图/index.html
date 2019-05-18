@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style>
+			*{margin: 0;padding: 0;}
+			ul,ol{
+				list-style: none;
+			}
+			.box {
+				width: 850px;
+				height: 500px;
+				margin: 50px auto;
+				overflow: hidden;
+				position: relative
+			}
+			.imgs{
+				width: 850px;
+				height: 3500px;
+				position: relative;
+			}
+			.imgs img{
+				width: 850px;
+				height: 500px;
+				float: left;
+			}
+			.box ol {
+				position: absolute;
+				right: 10%;
+				bottom: 10px;
+			}
+			.box ol li{
+				width: 20px;
+				height: 20px;
+				background: #fff;
+				margin-left: 5px;
+				float: left;
+				line-height: 20px;
+				text-align: center;
+				cursor: pointer;
+			}
+			.box ol li.ac{
+				background: red;
+				color: #fff;
+			}
+			.box>a{
+				text-decoration: none;
+				position: absolute;
+				top: 50%;
+				margin-top: -10px;
+				height: 40px;
+				line-height: 32px;
+				text-align: center;
+				width: 40px;
+				font-size: 40px;
+				vertical-align: middle;
+				color: #fff;
+				background: rgba(0,0,0,0.5);
+			}			
+			#goPrev{
+				left: 0;
+			}
+			#goNext{
+				right: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="box">
+			<div style="top: -500px;" class="imgs">
+				<img src="5.jpg" alt="">
+				<img src="1.jpg" alt="">
+				<img src="2.jpg" alt="">
+				<img src="3.jpg" alt="">
+				<img src="4.jpg" alt="">
+				<img src="5.jpg" alt="">
+				<img src="1.jpg" alt="">
+			</div>
+			<ol>
+				
+			</ol>
+			<a href="javascript:;" id="goPrev">&laquo;</a>
+			<a href="javascript:;" id="goNext">&raquo;</a>
+		</div>
+		<script src="tools.js"></script>
+		<script type="text/javascript">
+			var div = document.querySelector(".box"), //获取.box
+				divImg = document.querySelector(".imgs"), //获取.imgs
+				imgs =divImg.children, //获取.img下的子元素
+				ol = document.querySelector("ol"), //获取ol
+				btns =[], //定义按钮
+				index = 0, //定义index赋予初始值0
+				lastIndex = 0, //定义lastindex赋予初始值0
+				goNext = document.querySelector("#goNext"), //获取gonext
+				goPrev = document.querySelector("#goPrev"), //获取goprev
+				timer = null; //定义time赋予初始值null
+			//创建ol下的li(数字按钮)
+			for(let i = 0; i < imgs.length-2;i++){
+				var li = document.createElement("li");
+				li.innerHTML =i+1;
+				if(i === 0)li.classList.add('ac');
+				ol.appendChild(li);
+				btns.push(li);
+			}
+			//利用for循环创建点击ol下的li实现图片之间的切换
+			for(let i = 0; i < btns.length; i++){
+				btns[i].onclick =function (){ //按钮事件
+					index = i ; //将点击的坐标赋予当前坐标
+					change(); //执行切换动画
+					lastIndex = index; //将当前坐标赋予上一个坐标
+				}				
+			}
+			//下一个页面切换事件
+ 			goNext.onclick = function (){
+ 				if(++index === btns.length){ //判断下个切换页面是不是最后一个是就执行函数change2,不是就执行change
+ 					change2();
+					lastIndex = index;
+ 				}else{
+ 				change();
+ 				lastIndex = index;
+				}
+ 			};
+			//上一个页面切换事件
+ 			goPrev.onclick = function (){ //判断上个切换页面是不是第一个是就执行函数change3,不是就执行change
+ 				if(--index < 0){
+ 					change3();
+					lastIndex = index;
+ 				}else{
+ 				change();
+ 				lastIndex = index;
+				}
+ 			};
+			// 鼠标离开时调用自动播放
+ 			div.onmouseleave = (function autoPlay(){
+ 				timer = setInterval(goNext.onclick,3000); //设置定时器,隔3秒执行下一个页面切换
+				return autoPlay; //循环
+			})();		
+			div.onmouseenter = function(){
+				clearInterval(timer); //清空定时器
+			}
+			//常规页面切换
+			function change(){
+				//divImg.style.left = -850*(index) +'px'
+				tools.move(divImg,'top',-500*(index+1),600);
+				btns[lastIndex].classList.remove("ac");			
+				btns[index].classList.add("ac")
+			}
+			//从最后切换到第一张
+			function change2(){
+				//divImg.style.left = -850*(index) +'px'
+				tools.move(divImg,'top',-500*(index+1),600);
+				setTimeout(function(){
+					divImg.style.top = '-500px';
+				},600)
+				index = 0;
+				btns[lastIndex].classList.remove("ac");			
+				btns[index].classList.add("ac")
+			}
+			//从第一张向上切换到最后一张
+			 function change3(){
+			 	//divImg.style.left = -850*(index) +'px'
+			 	tools.move(divImg,'top',-500*(index+1),600);
+			 	setTimeout(function(){
+			 		divImg.style.top = '-2500px';
+			 	},600)
+			 	index = imgs.length-3;
+			 	btns[lastIndex].classList.remove("ac");			
+			 	btns[index].classList.add("ac")
+			} 
+		</script>
+	</body>
+</html>
